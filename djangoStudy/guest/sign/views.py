@@ -45,14 +45,11 @@ def event_manage(request):
     }
     return render(request, "event_manage.html", context)
 
-
 # 发布会名称搜索
 @login_required
 def search_name(request):
     username = request.session.get('user', '')
     search_name = request.GET.get("name", "")
-    # search_name_bytes = search_name.encode(encoding="utf-8")
-    # event_list = Event.objects.filter(name__contains=search_name_bytes)
     event_list = Event.objects.filter(name__contains=search_name)
     context = {
         "user": username,
@@ -65,33 +62,91 @@ def search_name(request):
 def guest_manage(request):
     guest_list = Guest.objects.all()
     username = request.session.get('user', '')
-    paginator = Paginator(guest_list, 2)
+    paginator = Paginator(guest_list, 10)
     page = request.GET.get('page')
     try:
         contacts = paginator.page(page)
     except PageNotAnInteger:
+        # 如果page 不是整数，取第一页的数据
         contacts = paginator.page(1)
     except EmptyPage:
+        # 如果page不再范围内，取最后一页
         contacts = paginator.page(paginator.num_pages)
     context = {
         'user': username,
         'guests': contacts,
     }
 
-    return render(request, "guest_manage.html",context)
+    return render(request, "guest_manage.html", context)
 
 # 签到页面
 @login_required
 def sign_index(request, eid):
     event = get_object_or_404(Event, id=eid)
-    print(event)
-    # guest_list = Guest.objects.filter(event_id=eid)           # 签到人数
-    # sign_list = Guest.objects.filter(sign="1", event_id=eid)   # 已签到数
-    # guest_data = str(len(guest_list))
-    # sign_data = str(len(sign_list))
+    # 该发布会下的总人数
+    allNum = len(Guest.objects.filter(event_id=eid))
+    # 已签到的总人数
+    signNum = len(Guest.objects.filter(event_id=eid, sign=True))
     context = {
         'event': event,
-        # 'guest': guest_data,
-        # 'sign': sign_data
+        'allNum': allNum,
+        'signNum': signNum,
     }
     return render(request, 'sign_index.html', context)
+
+# 签到动作
+@login_required
+def sign_index_action(request, eid):
+    event = get_object_or_404(Event, id=eid)
+    phone = request.POST.get('phone', '')
+    # 该发布会下的总人数
+    allNum = len(Guest.objects.filter(event_id=eid))
+
+    # 判断手机号是否存在
+    result = Guest.objects.filter(phone=phone)
+    if not result:
+        signNum = len(Guest.objects.filter(event_id=eid, sign=True))
+        context = {'event': event,
+                   'hint': 'phone error.',
+                   'allNum': allNum,
+                   'signNum': signNum,
+                }
+        return render(request, 'sign_index.html', context)
+
+    # 通过手机号和发布会ID来判断两者之间是否匹配
+    result = Guest.objects.filter(phone=phone, event_id=eid)
+    if not result:
+        signNum = len(Guest.objects.filter(event_id=eid, sign=True))
+        context = {'event': event,
+                   'hint': 'event id or phone error.',
+                   'allNum': allNum,
+                   'signNum': signNum,
+                   }
+        return render(request, 'sign_index.html', context)
+
+    # 判断嘉宾的签到状态，根据状态进行修改
+    result = Guest.objects.get(phone=phone, event_id=eid)
+    if result.sign:
+        signNum = len(Guest.objects.filter(event_id=eid, sign=True))
+        context = {'event': event,
+                   'hint': 'user has sign in.',
+                   'allNum': allNum,
+                   'signNum': signNum,
+                   }
+        return render(request, "sign_index.html", context)
+    else:
+        Guest.objects.filter(phone=phone, event_id=eid).update(sign=1)
+        signNum = len(Guest.objects.filter(event_id=eid, sign=True))
+        context = {'event': event,
+                   'hint': 'sign in success!.',
+                   'allNum': allNum,
+                   'signNum': signNum,
+                   }
+        return render(request, 'sign_index.html', context)
+
+
+@login_required
+def logout(request):
+    auth.logout(request)
+    response = HttpResponseRedirect('/index/')
+    return response

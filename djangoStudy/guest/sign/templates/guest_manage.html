@@ -62,15 +62,17 @@
 <!-- 列表分页器 -->
 <div class="pagination">
   <span class="step-links">
+    <a href="?page=1">首页</a>
     {% if guests.has_previous %}
-      <a href="?page={{ guests.previous_page_number }}">previous</a>
+      <a href="?page={{ guests.previous_page_number }}">上一页</a>
     {% endif %}
       <span class="current">
-        Page {{ guests.number }} of {{ guests.paginator.num_pages }}.
+        第 {{ guests.number }} / {{ guests.paginator.num_pages }}页
       </span>
     {% if guests.has_next %}
-        <a href="?page={{ guests.next_page_number }}">next</a>
+        <a href="?page={{ guests.next_page_number }}">下一页</a>
     {% endif %}
+    <a href="?page={{ guests.paginator.num_pages }}">尾页</a>
   </span>
 </div>
 

@@ -24,25 +24,28 @@
       </div>
     </nav>
 
- <div class="container theme-showcase" role="main">
+<!--签到功能-->
+<div class="page-header" style="padding-top: 80px">
 
-      <!--签到表单-->
-      <div class="row" style="margin-top:120px">
-        <div class="col-lg-6">
-          <form class="bs-example bs-example-form" role="form" action="/sign_index_action/{{ event.id }}/">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="输入手机号" name="phone">
-            <button type="submit" class="btn btn-success">签到</button><br>
+    <div id="navbar" class="navbar-collapse collapse">
+        <form class="navbar-form" method="post"
+              action="/sign_index_action/{{ event.id }}/">
+            <div class="form-group">
+                <input name="phone" type="text" placeholder="输入手机号" class="form-control">
+                {% csrf_token %}
+            </div>
+            <button type="submit" class="btn btn-success">签到</button>
+
             <font color="red">
-              <br>{{hint}}
-              <br>{{user.realname}}
-                <br>{{user.phone}}
+                <br>{{ hint }}
+                <br>{{ guest.realname }}
+                <br>{{ guest.phone }}
             </font>
-          </div><!-- /input-group -->
-          </form>
-        </div><!-- /.col-lg-6 -->
-      </div><!-- /.row -->
+        </form>
+        <h4>当前签到状况: {{ signNum }} / {{ allNum }}</h4>
+    </div>
+</div>
 
-    </div> <!-- /container   glyphicon glyphicon-phone border-style:none; -->
+
 </body>
 </html>

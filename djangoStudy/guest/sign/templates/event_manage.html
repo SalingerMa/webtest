@@ -52,6 +52,7 @@
             <th>状态</th>
             <th>地址</th>
             <th>时间</th>
+              <th>签到</th>
           </tr>
         </thead>
         <tbody>
@@ -64,7 +65,6 @@
               <td>{{ event.start_time }}</td>
             <td>
                 <a href="/sign_index/{{ event.id }}/" target="{{ event.id }} _blank">sign</a>
-
             </td>
             </tr>
          {% endfor %}

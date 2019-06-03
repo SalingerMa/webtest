@@ -3,8 +3,6 @@ from sign.models import Event, Guest
 
 # Register your models here.
 
-
-
 class EventAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'status', 'address', 'start_time']
     search_fields = ['name']
