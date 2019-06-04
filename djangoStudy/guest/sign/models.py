@@ -2,12 +2,12 @@ from django.db import models
 
 # Create your models here.
 class Event( models. Model):
-    name = models. CharField(max_length=100)  # 发布会 标题
-    limit = models. IntegerField()  # 参加 人数
-    status = models. BooleanField()  # 状态
-    address = models. CharField(max_length=200)  # 地址
-    start_time = models. DateTimeField('events time')  # 发布会 时间
-    create_time = models. DateTimeField(auto_now=True)  # 创建 时间（ 自动 获取
+    name = models.CharField(max_length=100)  # 发布会 标题
+    limit = models.IntegerField()  # 参加 人数
+    status = models.BooleanField()  # 状态
+    address = models.CharField(max_length=200)  # 地址
+    start_time = models.DateTimeField('events time')  # 发布会 时间
+    create_time = models.DateTimeField(auto_now=True)  # 创建 时间（ 自动 获取
 
     def __str__(self):
         return self.name
