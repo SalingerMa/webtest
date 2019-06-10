@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 import unittest
 import requests
-
+from case_data.eventinfo import GetEventList
 
 class GetEventListTest(unittest.TestCase):
     """查询发布会信息（带用户认证）"""
     def setUp(self):
-        self.base_url = "http://127.0.0.1:8000/api/sec_get_event_list/"
+        self.base_url = GetEventList.base_url
 
     def test_get_event_list1_auth_null(self):
         """auht为空"""
         r = requests.get(self.base_url, params={'eid': 1})
         result = r.json()
-        self.assertEqual(result['status'], 10011)
-        self.assertEqual(result['message'], 'user auth null')
+        self.assertEqual(result['status'], GetEventList.data['auth_null'][0])
+        self.assertEqual(result['message'], GetEventList.data['auth_null'][1])
 
     def test_get_event_list2_auth_error(self):
         """auth错误"""
